@@ -60,28 +60,29 @@ let decisions = []
 // c. empty model results
 let results = []
 
-// d. not sure what these are
-let alphaResults = []
+// // d. variances, I think (if you want to capture them)
+// let alphaResults = []
 
 // 2. declare a number of judgements to make (140 seems about right for a group of 24 people)...
 // (if coaches take around 20 seconds to judge, it'll take around 45 minutes to do a whole cohort)
-const numberOfJudgements = 140
-// ...and for each of them
-async.each(_.range(numberOfJudgements), (judgementIndex) => {
-
+// (more judgements make for more likely ordering)
+const judgements = _.range(140)
+// ...and, for each judgement
+async.each(judgements, (judgementIndex) => {
   // 3. pull out a random pair, using Swiss selection
   const pair = acj.selection.selectionSwiss(players)
 
   // 4. judge them
-  // a. We're using the devQuality to judge, 
-  // but this will happen onClick based on a coach estimate.
-
+  // a. get winner and a loser player objects
+  // (We're using the devQuality to judge, 
+  // but this will happen onClick based on a coach estimate)
+  // So IRL winner and loser will be pulled from coach interaction with the interface
   const winner = pair.sort((player1, player2) => player1.devQuality > player2.devQuality)[1]
   const loser = pair.sort((player1, player2) => player1.devQuality > player2.devQuality)[0]
 
-  // Judgements are recorded twice (once for each player: a win and a loss)
-  // this recordJudgement method
-  // mutates data on each player to store the results
+  // b. record the judgement
+  // (Judgements are recorded twice (once for each player: a win and a loss))
+  // (this recordJudgement method mutates data on each player to store the results)
   const recordJudgement = (player, win, opponent) => {
     player.comparisons++
     player.selected++
@@ -101,7 +102,7 @@ async.each(_.range(numberOfJudgements), (judgementIndex) => {
   recordJudgement(winner, 1, loser)
   recordJudgement(loser, 0, winner)
 
-  // b. construct an object with decision data
+  // c. construct an object with decision data
   const decision = {
     judge: 'Sam',
     chosen: winner._id,
@@ -109,11 +110,11 @@ async.each(_.range(numberOfJudgements), (judgementIndex) => {
     timeTaken: 0
   }
 
-  // c. push that object into some array of such decisions
+  // d. push that object into some array of such decisions
   decisions.push(decision)
 
-  // 5. Update the model (all iterations and judgements are 1 for this example)
-  // for reference, the four nulls are fixTheta, maxIter, conv, and eps. Whatever they are
+  // 5. Update the model with the new decisions we just added to
+  // (for reference, the four nulls are fixTheta, maxIter, conv, and eps)
   acj.btm.btmModel(decisions, null, null, null, null, function(err, teams) {
     for(var i = 0; i < players.length; i++){
       const player = players[i]
@@ -132,38 +133,28 @@ async.each(_.range(numberOfJudgements), (judgementIndex) => {
 
       // player.iteration tracks how many judges have judged this player
       // we're only simulating one judge ('Sam'), so it's 1
+      // for more judges, we'd have to add more iterations
       player.iteration = 1
       player.judgement = judgementIndex + 1
 
       const clonedPlayer = Object.assign({}, player)
       results.push(clonedPlayer)
     }
-    let alpha = acj.estimation.estimateReliability(players)
-    alpha.iteration = 1
-    alpha.judgement = judgementIndex + 1
 
-    alphaResults.push(alpha)
+    // variance results, if you want them
+    // let alpha = acj.estimation.estimateReliability(players)
+    // alpha.iteration = 1
+    // alpha.judgement = judgementIndex + 1
+
+    // alphaResults.push(alpha)
   })
 })
 
-// once done, log the results
-// console.log(results)
-
-// // and the 'alpha' results?
-// console.log(alphaResults)
-
-// 6. and now construct a scale
-
-// grab the chosens and unchosens from the decisions, and union them 
-let chosen = _.uniq(_.pluck(decisions, 'chosen'))
-let notChosen = _.uniq(_.pluck(decisions, 'notChosen'))
-let playerIds = _.union(chosen, notChosen)
-
-// args are task, players, iterations (4 is normal), and a callback(task, estimatedPlayers)
+// 6. Construct a scale using estimateCJ
+// (args are task, players, iterations (4 is normal), and a callback(task, estimatedPlayers))
 acj.estimation.estimateCJ('sim comparison', players, 4, (task, estimatedPlayers) => {
-  // by way of proof this works, these should be ordered in various ways
-  // more judgements makes for more likely ordering
-  
+
+  // 'observed score' is basically how many comparisons they won
   console.log('sorted by "observed Score"')
   const sortedByObservedScore = estimatedPlayers.slice().sort((player1, player2) => player1.observedScore - player2.observedScore)
   for(var i = 0; i < sortedByObservedScore.length; i++) {
@@ -171,14 +162,20 @@ acj.estimation.estimateCJ('sim comparison', players, 4, (task, estimatedPlayers)
     console.log(`${player.name} : ${player.observedScore}`)
   }
 
+  // 'true score' is where the magic lies: castable onto a distribution
+  // and pretty accurate
   console.log('sorted by "true score"')
   const sortedByTrueScore = estimatedPlayers.slice().sort((player1, player2) => player1.trueScore - player2.trueScore)
   for(var i = 0; i < sortedByTrueScore.length; i++) {
     const player = sortedByTrueScore[i]
     console.log(`${player.name} : ${player.trueScore}`)
   }
-    
-  
+
+  console.log('casted onto a Rasch distribution and multiplied by 100 (compared with actual quality)')
+  for(var i = 0; i < sortedByTrueScore.length; i++) {
+    const player = sortedByTrueScore[i]
+    console.log(`${player.name}: ${Math.round(acj.estimation.rasch(player.trueScore, 0) * 100)} (${player.devQuality})`)
+  }
 
   // seTrue score is just some measure of variance by the looks of things
   // console.log('sorted by "seTrue score"')
