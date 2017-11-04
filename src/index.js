@@ -118,12 +118,12 @@ async.each(judgements, (judgementIndex) => {
   acj.btm.btmModel(decisions, null, null, null, null, function(err, teams) {
     for(var i = 0; i < players.length; i++){
       const player = players[i]
-      var playerInModel = _.find(teams, (team) =>  { return player._id == team.team })
+      var playerInModel = _.find(teams, (team) =>  { return player._id === team.team })
       
       if (playerInModel) {
         player.chosen = 0
 
-        if (player._id == decision.chosen | player._id == decision.notChosen)
+        if (player._id === decision.chosen | player._id === decision.notChosen)
           player.chosen = 1
 
         player.lastTrueScore = player.trueScore
@@ -166,14 +166,14 @@ acj.estimation.estimateCJ('sim comparison', players, 4, (task, estimatedPlayers)
   // and pretty accurate
   console.log('sorted by "true score"')
   const sortedByTrueScore = estimatedPlayers.slice().sort((player1, player2) => player1.trueScore - player2.trueScore)
-  for(var i = 0; i < sortedByTrueScore.length; i++) {
-    const player = sortedByTrueScore[i]
+  for(var j = 0; j < sortedByTrueScore.length; j++) {
+    const player = sortedByTrueScore[j]
     console.log(`${player.name} : ${player.trueScore}`)
   }
 
   console.log('casted onto a Rasch distribution and multiplied by 100 (compared with actual quality)')
-  for(var i = 0; i < sortedByTrueScore.length; i++) {
-    const player = sortedByTrueScore[i]
+  for(var k = 0; k < sortedByTrueScore.length; k++) {
+    const player = sortedByTrueScore[k]
     console.log(`${player.name}: ${Math.round(acj.estimation.rasch(player.trueScore, 0) * 100)} (${player.devQuality})`)
   }
 
