@@ -1,21 +1,24 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
+import React from 'react';
+import Pdf from './Pdf';
+import {Row, Column} from 'react-foundation';
 import './App.css';
 
-class App extends Component {
+class App extends React.Component {
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-      </div>
-    );
+
+      <main className="main">
+        <Row className="display">
+          <Column small={6}>
+            <Pdf file="Albion31.pdf" />
+          </Column>
+          <Column small={6}>
+            <Pdf file="Calum-W.pdf" />
+          </Column>
+        </Row>
+      </main>
+    )
   }
 }
 
-export default App;
+export default App
