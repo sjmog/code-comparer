@@ -8,7 +8,27 @@ import acj from 'comparative-judgement';
 var _ = require('underscore');
 var async = require('async');
 
-ReactDOM.render(<App />, document.getElementById('root'));
+const players = [
+        { file: "Albion31.pdf", "_id": 1, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0 },
+        { file: "Calum-W.pdf", "_id": 2, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0 },
+        { file: "charlesemery15.pdf", "_id": 3, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0 },
+        { file: "Ciancion.pdf", "_id": 4, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0 },
+        { file: "ewintram.pdf", "_id": 5, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0 },
+        { file: "GeorgeWhiting.pdf", "_id": 6, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0 },
+        { file: "ker-an.pdf", "_id": 7, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0 },
+        { file: "LarsFin.pdf", "_id": 8, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0 },
+        { file: "Le5tes.pdf", "_id": 9, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0 },
+        { file: "lunaticnick.pdf", "_id": 10, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0 },
+        { file: "Meepit.pdf", "_id": 11, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0 },
+        { file: "newtdogg.pdf", "_id": 12, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0 },
+        { file: "rskyte.pdf", "_id": 13, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0 },
+        { file: "samuel-c-johnson.pdf", "_id": 14, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0 },
+        { file: "tallpress.pdf", "_id": 15, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0 },
+        { file: "umairb1.pdf", "_id": 16, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0 },
+        { file: "Xin00163.pdf", "_id": 17, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0 },
+      ]
+
+ReactDOM.render(<App players={players} />, document.getElementById('root'));
 registerServiceWorker();
 
 // 1. set up 
@@ -17,32 +37,32 @@ registerServiceWorker();
 // to see how the results stack up if they are judged 'perfectly'
 // ultimately the mapping of the player.trueScore is what tells us the 'quality'
 // (this is to simulate judging a cohort of 24 to find a reasonable number of required judgements to be accurate)
-const players = [
-{name: "Student #1", "_id": 1, devQuality: 4, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0}, 
-{name: "Student #2", "_id": 2, devQuality: 16, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0}, 
-{name: "Student #3", "_id": 3, devQuality: 18, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0}, 
-{name: "Student #4", "_id": 4, devQuality: 22, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0}, 
-{name: "Student #5", "_id": 5, devQuality: 28, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0}, 
-{name: "Student #6", "_id": 6, devQuality: 29, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0}, 
-{name: "Student #7", "_id": 7, devQuality: 33, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0}, 
-{name: "Student #8", "_id": 8, devQuality: 38, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0}, 
-{name: "Student #9", "_id": 9, devQuality: 38, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0}, 
-{name: "Student #10", "_id": 10, devQuality: 41, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0},
-{name: "Student #11", "_id": 11, devQuality: 55, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0},
-{name: "Student #12", "_id": 12, devQuality: 57, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0},
-{name: "Student #13", "_id": 13, devQuality: 61, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0},
-{name: "Student #14", "_id": 14, devQuality: 69, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0},
-{name: "Student #15", "_id": 15, devQuality: 71, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0},
-{name: "Student #16", "_id": 16, devQuality: 72, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0},
-{name: "Student #17", "_id": 17, devQuality: 74, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0},
-{name: "Student #18", "_id": 18, devQuality: 76, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0},
-{name: "Student #19", "_id": 19, devQuality: 77, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0},
-{name: "Student #20", "_id": 20, devQuality: 81, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0},
-{name: "Student #21", "_id": 21, devQuality: 81, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0},
-{name: "Student #22", "_id": 22, devQuality: 82, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0},
-{name: "Student #23", "_id": 23, devQuality: 88, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0},
-{name: "Student #24", "_id": 24, devQuality: 91, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0}
-]
+// const players = [
+// {name: "Student #1", "_id": 1, devQuality: 4, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0}, 
+// {name: "Student #2", "_id": 2, devQuality: 16, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0}, 
+// {name: "Student #3", "_id": 3, devQuality: 18, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0}, 
+// {name: "Student #4", "_id": 4, devQuality: 22, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0}, 
+// {name: "Student #5", "_id": 5, devQuality: 28, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0}, 
+// {name: "Student #6", "_id": 6, devQuality: 29, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0}, 
+// {name: "Student #7", "_id": 7, devQuality: 33, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0}, 
+// {name: "Student #8", "_id": 8, devQuality: 38, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0}, 
+// {name: "Student #9", "_id": 9, devQuality: 38, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0}, 
+// {name: "Student #10", "_id": 10, devQuality: 41, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0},
+// {name: "Student #11", "_id": 11, devQuality: 55, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0},
+// {name: "Student #12", "_id": 12, devQuality: 57, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0},
+// {name: "Student #13", "_id": 13, devQuality: 61, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0},
+// {name: "Student #14", "_id": 14, devQuality: 69, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0},
+// {name: "Student #15", "_id": 15, devQuality: 71, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0},
+// {name: "Student #16", "_id": 16, devQuality: 72, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0},
+// {name: "Student #17", "_id": 17, devQuality: 74, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0},
+// {name: "Student #18", "_id": 18, devQuality: 76, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0},
+// {name: "Student #19", "_id": 19, devQuality: 77, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0},
+// {name: "Student #20", "_id": 20, devQuality: 81, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0},
+// {name: "Student #21", "_id": 21, devQuality: 81, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0},
+// {name: "Student #22", "_id": 22, devQuality: 82, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0},
+// {name: "Student #23", "_id": 23, devQuality: 88, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0},
+// {name: "Student #24", "_id": 24, devQuality: 91, selected: 0, comparisons: 0, observedScore: 0, trueScore: 0, seTrueScore: 0, opponents: [], decisions: [], theta: 0, chosen: 0, lastTrueScore: 0}
+// ]
 
 // (for the sim, we'll shuffle it too)
 const shuffle = (a) => {
