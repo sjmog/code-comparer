@@ -1,10 +1,14 @@
 import React from 'react';
-import Player from './Player'
-import {Row, Column} from 'react-foundation';
+import Code from './Code'
+import {Row, Column, Button} from 'react-foundation';
 import './App.css';
 import acj from 'comparative-judgement';
 
 var _ = require('underscore');
+
+const NUMBER_OF_JUDGEMENTS = 5
+const JUDGE_NAME = 'Sam'
+const JUDGE_COUNT = 1
 
 class App extends React.Component {
   constructor(props) {
@@ -29,8 +33,31 @@ class App extends React.Component {
     this._updateModel(winner, loser)
 
     this.setState((prevState, props) => {
-      return { pair: acj.selection.selectionSwiss(this.props.players) }
+      return { 
+        pair: acj.selection.selectionSwiss(this.props.players),
+        judgementIndex: prevState.judgementIndex + 1
+      }
     })
+  }
+
+  isComplete = () => {
+    return this.state.judgementIndex >= NUMBER_OF_JUDGEMENTS - 1
+  }
+
+  results = () => {
+    let results
+
+    acj.estimation.estimateCJ('comparison', this.props.players, 4, (task, estimatedPlayers) => {
+      const sortedByTrueScore = estimatedPlayers.slice().sort((player1, player2) => player1.trueScore - player2.trueScore)
+      
+      results = sortedByTrueScore.map((player) => {
+        const raschScore = Math.round(acj.estimation.rasch(player.trueScore, 0) * 100)
+
+        return <p>{player.file}: {raschScore} (raw: {player.trueScore})</p>
+      })
+    })
+
+    return results
   }
 
   _recordJudgement = (player, win, opponent) => {
@@ -46,7 +73,7 @@ class App extends React.Component {
 
   _updateModel = (winner, loser) => {
     this.state.decisions.push({
-      judge: 'Sam',
+      judge: JUDGE_NAME,
       chosen: winner._id,
       notChosen: loser._id,
       timeTaken: 0
@@ -68,10 +95,7 @@ class App extends React.Component {
           player.seTrueScore = playerInModel.seTheta
         }
 
-        // player.iteration tracks how many judges have judged this player
-        // we're only simulating one judge ('Sam'), so it's 1
-        // for more judges, we'd have to add more iterations
-        player.iteration = 1
+        player.iteration = JUDGE_COUNT
         player.judgement = this.state.judgementIndex + 1
 
         const clonedPlayer = Object.assign({}, player)
@@ -81,14 +105,36 @@ class App extends React.Component {
   }
 
   render() {
+    let complete = null
+
+    if(this.isComplete()) {
+      complete = <p className="whole-page">{this.results()}</p>
+    }
+
     return (
       <main className="main">
+        {complete}
+        <Row className="display">
+          <Column small={4}>
+            <Button id={this.state.pair[0]._id} onClick={this.judgeWinner}>
+                Left
+            </Button>
+          </Column>
+          <Column small={4}>
+            <p className="center">If you could only advance one from a tech test, which would you pick?</p>
+          </Column>
+          <Column small={4}>
+            <Button id={this.state.pair[1]._id} onClick={this.judgeWinner}>
+                Right
+            </Button>
+          </Column>
+        </Row>
         <Row className="display">
           <Column small={6}>
-            <Player onJudge={this.judgeWinner} pair={this.state.pair[0]} side="Left" />
+            <Code file={this.state.pair[0].file} />
           </Column>
           <Column small={6}>
-            <Player onJudge={this.judgeWinner} pair={this.state.pair[1]} side="Right" />
+            <Code file={this.state.pair[1].file} />
           </Column>
         </Row>
       </main>
